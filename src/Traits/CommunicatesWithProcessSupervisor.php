@@ -34,13 +34,13 @@ trait CommunicatesWithProcessSupervisor
      *
      * @throws \RuntimeException if the process supervisor has already been set.
      */
-    public function setProcessSupervisor(ProcessSupervisor $processSupervisor): void
+    public function setProcessSupervisor(ProcessSupervisor $process): void
     {
         if ($this->processSupervisor !== null) {
-            throw new RuntimeException('The process supervisor has already been set.');
+            throw new \RuntimeException('The process supervisor has already been set.');
         }
 
-        $this->processSupervisor = $processSupervisor;
+        $this->processSupervisor = $process;
     }
 
     /**

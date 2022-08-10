@@ -132,7 +132,7 @@ class Instruction implements \JsonSerializable
      */
     protected function validateValue($value)
     {
-        if (is_object($value) && ($value instanceof Closure)) {
+        if (is_object($value) && ($value instanceof \Closure)) {
             throw new InvalidArgumentException('You must use JS function wrappers instead of PHP closures.');
         }
 

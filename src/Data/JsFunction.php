@@ -116,7 +116,7 @@ class JsFunction implements \JsonSerializable
         $name = lcfirst(substr($name, strlen('createWith')));
 
         if ($name === 'jsonSerialize') {
-            throw new BadMethodCallException;
+            throw new \BadMethodCallException;
         }
 
         return call_user_func([new self, $name], ...$arguments);

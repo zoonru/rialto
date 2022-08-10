@@ -3,13 +3,13 @@
 namespace Nesk\Rialto\Tests;
 
 use Monolog\Logger;
+use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
 use ReflectionClass;
 use Psr\Log\LogLevel;
 use PHPUnit\Util\ErrorHandler;
 use Symfony\Component\Process\Process;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use PHPUnit\Framework\MockObject\Matcher\Invocation;
 
 class TestCase extends BaseTestCase
 {
@@ -36,7 +36,7 @@ class TestCase extends BaseTestCase
         set_error_handler(
             function (int $errorNumber, string $errorString, string $errorFile, int $errorLine) use ($messagePattern) {
                 if ($errorNumber !== E_USER_DEPRECATED || preg_match($messagePattern, $errorString) !== 1) {
-                    ErrorHandler::handleError($errorNumber, $errorString, $errorFile, $errorLine);
+                    (new ErrorHandler(true, true, true, true))($errorNumber, $errorString, $errorFile, $errorLine);
                 }
             }
         );
@@ -68,10 +68,9 @@ class TestCase extends BaseTestCase
     public function loggerMock($expectations) {
         $loggerMock = $this->getMockBuilder(Logger::class)
             ->setConstructorArgs(['rialto'])
-            ->setMethods(['log'])
+            ->onlyMethods(['log'])
             ->getMock();
-
-        if ($expectations instanceof Invocation) {
+        if ($expectations instanceof InvocationOrder) {
             $expectations = [func_get_args()];
         }
 

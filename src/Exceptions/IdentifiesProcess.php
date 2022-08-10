@@ -14,7 +14,7 @@ trait IdentifiesProcess
     /**
      * Return the associated process.
      */
-    public function getProcess(): Process
+    public function getProcess(): \Symfony\Component\Process\Process
     {
         return $this->process;
     }

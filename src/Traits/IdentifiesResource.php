@@ -10,7 +10,7 @@ trait IdentifiesResource
     /**
      * The identity of the resource.
      *
-     * @var \Nesk\Rialto\ResourceIdentity
+     * @var \Nesk\Rialto\Data\ResourceIdentity
      */
     protected $resourceIdentity;
 
