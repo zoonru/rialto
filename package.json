@@ -1,6 +1,6 @@
 {
-  "name": "@nesk/rialto",
-  "version": "1.4.0",
+  "name": "@zoon/rialto",
+  "version": "1.5.0",
   "description": "Manage Node resources from PHP",
   "keywords": [
     "php",
@@ -16,7 +16,7 @@
     "url": "https://johann.pardanaud.com/"
   },
   "license": "MIT",
-  "repository": "github:nesk/rialto",
+  "repository": "github:zoonru/rialto",
   "main": "src/node-process",
   "engines": {
     "node": ">=8.0.0"
