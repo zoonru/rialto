@@ -230,7 +230,7 @@ class ProcessSupervisor
         $process = new SymfonyProcess([
             $this->options['executable_path'],
             '-e',
-            "process.stdout.write(require.resolve('@nesk/rialto/src/node-process/serve.js'))",
+            "process.stdout.write(require.resolve('@zoon/rialto/src/node-process/serve.js'))",
         ]);
 
         $exitCode = $process->run();
