@@ -109,9 +109,9 @@ class Connection extends EventEmitter
             const chunk = payload.substr(i * bodySize, bodySize);
 
             let chunksLeft = String(chunkCount - 1 - i);
-            chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE - 1, '0');
+            chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE, '0');
 
-            this.socket.write(`${chunksLeft}:${chunk}`);
+            this.socket.write(`${chunksLeft}${chunk}`);
         }
     }
 
