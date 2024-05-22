@@ -50,7 +50,7 @@ class Connection extends EventEmitter
             buffer += data;
             if (buffer.endsWith("\0")) {
                 buffer = buffer.slice(0, -1);
-                this.handleSocketData('');
+                this.handleSocketData(buffer);
                 buffer = '';
             }
         });
