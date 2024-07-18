@@ -43,10 +43,16 @@ class Connection extends EventEmitter
     {
         socket.setEncoding('utf8');
 
+        let buffer = '';
         socket.on('data', data => {
             this.emit('activity');
 
-            this.handleSocketData(data);
+            buffer += data;
+            if (buffer.endsWith("\0")) {
+                buffer = buffer.slice(0, -1);
+                this.handleSocketData(buffer);
+                buffer = '';
+            }
         });
 
         return socket;
@@ -109,9 +115,9 @@ class Connection extends EventEmitter
             const chunk = payload.substr(i * bodySize, bodySize);
 
             let chunksLeft = String(chunkCount - 1 - i);
-            chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE - 1, '0');
+            chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE, '0');
 
-            this.socket.write(`${chunksLeft}:${chunk}`);
+            this.socket.write(`${chunksLeft}${chunk}`);
         }
     }
 

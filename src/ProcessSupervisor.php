@@ -377,7 +377,12 @@ class ProcessSupervisor
         }
 
         $this->client->selectWrite(1);
-        $this->client->write($serializedInstruction);
+        
+        $packet = $serializedInstruction . chr(0);
+        $packetSentByteCount = 0;
+        while ($packetSentByteCount < strlen($packet)) {
+            $packetSentByteCount += $this->client->write(substr($packet, $packetSentByteCount));
+        }
 
         $value = $this->readNextProcessValue($instructionShouldBeLogged);
 
