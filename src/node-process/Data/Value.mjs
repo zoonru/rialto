@@ -1,8 +1,8 @@
 'use strict';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-class Value
+export default class Value
 {
     /**
      * Determine if the value is a string, a number, a boolean, or null.
@@ -59,5 +59,3 @@ class Value
         return !Value.isContainer(value) && !Value.isScalar(value);
     }
 }
-
-module.exports = Value;

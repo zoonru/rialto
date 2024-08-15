@@ -1,8 +1,8 @@
 'use strict';
 
-const ResourceIdentity = require('./Data/ResourceIdentity');
+import ResourceIdentity from './Data/ResourceIdentity.mjs';
 
-class Instruction
+export default class Instruction
 {
     /**
      * Constructor.
@@ -221,5 +221,3 @@ Object.assign(Instruction, {
     TYPE_GET: 'get',
     TYPE_SET: 'set',
 });
-
-module.exports = Instruction;

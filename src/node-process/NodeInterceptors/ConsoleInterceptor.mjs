@@ -1,6 +1,6 @@
 'use strict';
 
-const StandardStreamsInterceptor = require('./StandardStreamsInterceptor');
+import StandardStreamsInterceptor from './StandardStreamsInterceptor.mjs';
 
 const SUPPORTED_CONSOLE_METHODS = {
     'debug': 'DEBUG',
@@ -13,7 +13,7 @@ const SUPPORTED_CONSOLE_METHODS = {
     'warn': 'WARNING',
 };
 
-class ConsoleInterceptor
+export default class ConsoleInterceptor
 {
     /**
      * Log interceptor.
@@ -97,5 +97,3 @@ class ConsoleInterceptor
 }
 
 ConsoleInterceptor.originalConsole = console;
-
-module.exports = ConsoleInterceptor;

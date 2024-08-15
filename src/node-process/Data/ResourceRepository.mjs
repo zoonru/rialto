@@ -1,15 +1,15 @@
 'use strict';
 
-const ResourceIdentity = require('./ResourceIdentity');
+import ResourceIdentity from './ResourceIdentity.mjs';
 
-class ResourceRepository
+export default class ResourceRepository
 {
     /**
      * Constructor.
      */
     constructor()
     {
-        this.resources = new Map;
+        this.resources = new Map();
     }
 
     /**
@@ -108,6 +108,4 @@ class ResourceRepository
     }
 }
 
-ResourceRepository.globalResources = new Map;
-
-module.exports = ResourceRepository;
+ResourceRepository.globalResources = new Map();

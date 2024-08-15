@@ -1,12 +1,12 @@
 'use strict';
 
-const net = require('net'),
-    Connection = require('./Connection');
+import net from 'net';
+import Connection from './Connection.mjs';
 
 /**
  * Listen for new socket connections.
  */
-class Server
+export default class Server
 {
     /**
      * Constructor.
@@ -70,5 +70,3 @@ class Server
         }
     }
 }
-
-module.exports = Server;

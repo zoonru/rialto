@@ -1,9 +1,9 @@
 'use strict';
 
-const ConsoleInterceptor = require('./NodeInterceptors/ConsoleInterceptor'),
-    Logger = require('./Logger'),
-    Server = require('./Server'),
-    DataSerializer = require('./Data/Serializer');
+import ConsoleInterceptor from './NodeInterceptors/ConsoleInterceptor.mjs';
+import Logger from './Logger.mjs';
+import Server from './Server.mjs';
+import DataSerializer from './Data/Serializer.mjs';
 
 // Throw unhandled rejections
 process.on('unhandledRejection', error => {
@@ -31,7 +31,8 @@ if (options.log_node_console === true) {
 }
 
 // Instanciate the custom connection delegate
-const connectionDelegate = new (require(process.argv.slice(2)[0]))(options);
+const connectionDelegateClass = (await import(`file://${process.argv[2]}`)).default;
+const connectionDelegate = new connectionDelegateClass(options);
 
 // Start the server with the custom connection delegate
 const server = new Server(connectionDelegate, options);

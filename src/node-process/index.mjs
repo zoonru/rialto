@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = {
-    ConnectionDelegate: require('./ConnectionDelegate'),
-};
+import ConnectionDelegate from './ConnectionDelegate.mjs';
+
+export default ConnectionDelegate;

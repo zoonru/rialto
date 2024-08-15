@@ -1,8 +1,8 @@
 'use strict';
 
-const Value = require('./Value');
+import Value from './Value.mjs';
 
-class Serializer
+export default class Serializer
 {
     /**
      * Serialize an error to JSON.
@@ -48,5 +48,3 @@ class Serializer
         }
     }
 }
-
-module.exports = Serializer;

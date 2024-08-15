@@ -1,17 +1,17 @@
 'use strict';
 
-const EventEmitter = require('events'),
-    ConnectionDelegate = require('./ConnectionDelegate'),
-    ResourceRepository = require('./Data/ResourceRepository'),
-    Instruction = require('./Instruction'),
-    DataSerializer = require('./Data/Serializer'),
-    DataUnserializer = require('./Data/Unserializer'),
-    Logger = require('./Logger');
+import EventEmitter from 'events';
+import ConnectionDelegate from './ConnectionDelegate.mjs';
+import ResourceRepository from './Data/ResourceRepository.mjs';
+import Instruction from './Instruction.mjs';
+import DataSerializer from './Data/Serializer.mjs';
+import DataUnserializer from './Data/Unserializer.mjs'
+import Logger from './Logger.mjs';
 
 /**
  * Handle a connection interacting with this process.
  */
-class Connection extends EventEmitter
+export default class Connection extends EventEmitter
 {
     /**
      * Constructor.
@@ -159,5 +159,3 @@ Connection.SOCKET_PACKET_SIZE = 1024;
  * @type {number}
  */
 Connection.SOCKET_HEADER_SIZE = 5;
-
-module.exports = Connection;

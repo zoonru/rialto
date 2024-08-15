@@ -1,10 +1,10 @@
 'use strict';
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 const STANDARD_STREAMS = [process.stdout, process.stderr];
 
-class StandardStreamsInterceptor
+export default class StandardStreamsInterceptor
 {
     /**
      * Standard stream interceptor.
@@ -49,6 +49,4 @@ class StandardStreamsInterceptor
     }
 }
 
-StandardStreamsInterceptor.standardStreamWriters = new Map;
-
-module.exports = StandardStreamsInterceptor;
+StandardStreamsInterceptor.standardStreamWriters = new Map();

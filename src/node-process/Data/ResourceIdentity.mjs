@@ -1,6 +1,6 @@
 'use strict';
 
-class ResourceIdentity
+export default class ResourceIdentity
 {
     /**
      * Constructor.
@@ -58,5 +58,3 @@ class ResourceIdentity
         };
     }
 }
-
-module.exports = ResourceIdentity;

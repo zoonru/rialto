@@ -225,12 +225,13 @@ class ProcessSupervisor
         }
 
         // The script path in local development
-        $scriptPath = __DIR__.'/node-process/serve.js';
+        $scriptPath = __DIR__.'/node-process/serve.mjs';
 
         $process = new SymfonyProcess([
             $this->options['executable_path'],
             '-e',
-            "process.stdout.write(require.resolve('@zoon/rialto/src/node-process/serve.js'))",
+            //"process.stdout.write(require.resolve('@zoon/rialto/src/node-process/serve.mjs'))",
+            $scriptPath,
         ]);
 
         $exitCode = $process->run();

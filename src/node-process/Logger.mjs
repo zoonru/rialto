@@ -1,6 +1,6 @@
 'use strict';
 
-class Logger
+export default class Logger
 {
     /**
      * Add a new log to the queue.
@@ -26,5 +26,3 @@ class Logger
 }
 
 Logger.logsQueue = [];
-
-module.exports = Logger;

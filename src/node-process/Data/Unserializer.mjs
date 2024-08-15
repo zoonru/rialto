@@ -1,14 +1,14 @@
 'use strict';
 
-const _ = require('lodash'),
-    Value = require('./Value'),
-    ResourceIdentity = require('./ResourceIdentity'),
-    ResourceRepository = require('./ResourceRepository');
+import _ from 'lodash';
+import Value from './Value.mjs';
+import ResourceIdentity from './ResourceIdentity.mjs';
+import ResourceRepository from './ResourceRepository.mjs';
 
 // Some unserialized functions require an access to the ResourceRepository class, so we must put it in the global scope.
 global.__rialto_ResourceRepository__ = ResourceRepository;
 
-class Unserializer
+export default class Unserializer
 {
     /**
      * Constructor.
@@ -94,5 +94,3 @@ class Unserializer
         `)();
     }
 }
-
-module.exports = Unserializer;

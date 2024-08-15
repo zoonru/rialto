@@ -13,7 +13,7 @@
 /**
  * Handle the requests of a connection.
  */
-class ConnectionDelegate
+export default class ConnectionDelegate
 {
     /**
      * Constructor.
@@ -37,5 +37,3 @@ class ConnectionDelegate
         responseHandler(null);
     }
 }
-
-module.exports = ConnectionDelegate;
