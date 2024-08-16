@@ -1,22 +1,20 @@
-'use strict';
+"use strict";
 
-import _ from 'lodash';
-import Value from './Value.mjs';
-import ResourceIdentity from './ResourceIdentity.mjs';
-import ResourceRepository from './ResourceRepository.mjs';
+import _ from "lodash";
+import ResourceIdentity from "./ResourceIdentity.mjs";
+import ResourceRepository from "./ResourceRepository.mjs";
+import Value from "./Value.mjs";
 
 // Some unserialized functions require an access to the ResourceRepository class, so we must put it in the global scope.
 global.__rialto_ResourceRepository__ = ResourceRepository;
 
-export default class Unserializer
-{
+export default class Unserializer {
     /**
      * Constructor.
      *
      * @param  {ResourceRepository} resources
      */
-    constructor(resources)
-    {
+    constructor(resources) {
         this.resources = resources;
     }
 
@@ -26,11 +24,10 @@ export default class Unserializer
      * @param  {*} value
      * @return {*}
      */
-    unserialize(value)
-    {
-        if (_.get(value, '__rialto_resource__') === true) {
+    unserialize(value) {
+        if (_.get(value, "__rialto_resource__") === true) {
             return this.resources.retrieve(ResourceIdentity.unserialize(value));
-        } else if (_.get(value, '__rialto_function__') === true) {
+        } else if (_.get(value, "__rialto_function__") === true) {
             return this.unserializeFunction(value);
         } else if (Value.isContainer(value)) {
             return Value.mapContainer(value, this.unserialize.bind(this));
@@ -45,8 +42,7 @@ export default class Unserializer
      * @param  {*} value
      * @return {string}
      */
-    embedFunctionValue(value)
-    {
+    embedFunctionValue(value) {
         value = this.unserialize(value);
         const valueUniqueIdentifier = ResourceRepository.storeGlobal(value);
 
@@ -66,8 +62,7 @@ export default class Unserializer
      * @param  {Object} value
      * @return {Function}
      */
-    unserializeFunction(value)
-    {
+    unserializeFunction(value) {
         const scopedVariables = [];
 
         for (let [varName, varValue] of Object.entries(value.scope)) {
@@ -84,11 +79,11 @@ export default class Unserializer
             }
         }
 
-        const asyncFlag = value.async ? 'async' : '';
+        const asyncFlag = value.async ? "async" : "";
 
         return new Function(`
-            return ${asyncFlag} function (${parameters.join(', ')}) {
-                ${scopedVariables.join('\n')}
+            return ${asyncFlag} function (${parameters.join(", ")}) {
+                ${scopedVariables.join("\n")}
                 ${value.body}
             };
         `)();

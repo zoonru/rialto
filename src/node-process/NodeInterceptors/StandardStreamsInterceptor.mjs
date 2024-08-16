@@ -1,11 +1,10 @@
-'use strict';
+"use strict";
 
-import _ from 'lodash';
+import _ from "lodash";
 
 const STANDARD_STREAMS = [process.stdout, process.stderr];
 
-export default class StandardStreamsInterceptor
-{
+export default class StandardStreamsInterceptor {
     /**
      * Standard stream interceptor.
      *
@@ -19,7 +18,7 @@ export default class StandardStreamsInterceptor
      * @param  {standardStreamInterceptor} interceptor
      */
     static startInterceptingStrings(interceptor) {
-        STANDARD_STREAMS.forEach(stream => {
+        STANDARD_STREAMS.forEach((stream) => {
             this.standardStreamWriters.set(stream, stream.write);
 
             stream.write = (chunk, encoding, callback) => {
@@ -42,7 +41,7 @@ export default class StandardStreamsInterceptor
      * Stop intercepting data written on the standard streams.
      */
     static stopInterceptingStrings() {
-        STANDARD_STREAMS.forEach(stream => {
+        STANDARD_STREAMS.forEach((stream) => {
             stream.write = this.standardStreamWriters.get(stream);
             this.standardStreamWriters.delete(stream);
         });

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Exceptions\Node;
 
 trait HandlesNodeErrors
@@ -33,7 +35,7 @@ trait HandlesNodeErrors
         $message = $error['message'];
 
         if ($appendStackTraceToMessage) {
-            $message .= "\n\n".$error['stack'];
+            $message .= "\n\n" . $error['stack'];
         }
 
         return $message;

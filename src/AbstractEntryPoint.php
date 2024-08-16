@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto;
 
 use Nesk\Rialto\Interfaces\ShouldHandleProcessDelegation;
@@ -22,12 +24,12 @@ abstract class AbstractEntryPoint
         string $connectionDelegatePath,
         ?ShouldHandleProcessDelegation $processDelegate = null,
         array $implementationOptions = [],
-        array $userOptions = []
+        array $userOptions = [],
     ) {
         $process = new ProcessSupervisor(
             $connectionDelegatePath,
             $processDelegate,
-            $this->consolidateOptions($implementationOptions, $userOptions)
+            $this->consolidateOptions($implementationOptions, $userOptions),
         );
 
         $this->setProcessSupervisor($process);

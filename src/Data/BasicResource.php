@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Data;
 
 use Nesk\Rialto\Traits\{IdentifiesResource, CommunicatesWithProcessSupervisor};

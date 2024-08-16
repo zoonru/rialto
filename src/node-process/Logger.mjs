@@ -1,7 +1,6 @@
-'use strict';
+"use strict";
 
-export default class Logger
-{
+export default class Logger {
     /**
      * Add a new log to the queue.
      *
@@ -10,7 +9,7 @@ export default class Logger
      * @param  {string} message
      */
     static log(origin, level, message) {
-        this.logsQueue.push({origin, level, message});
+        this.logsQueue.push({ origin, level, message });
     }
 
     /**

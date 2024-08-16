@@ -1,21 +1,19 @@
-'use strict';
+"use strict";
 
-import net from 'net';
-import Connection from './Connection.mjs';
+import net from "net";
+import Connection from "./Connection.mjs";
 
 /**
  * Listen for new socket connections.
  */
-export default class Server
-{
+export default class Server {
     /**
      * Constructor.
      *
      * @param  {ConnectionDelegate} connectionDelegate
      * @param  {Object} options
      */
-    constructor(connectionDelegate, options = {})
-    {
+    constructor(connectionDelegate, options = {}) {
         this.options = options;
 
         this.started = this.start(connectionDelegate);
@@ -29,17 +27,16 @@ export default class Server
      * @param  {ConnectionDelegate} connectionDelegate
      * @return {Promise}
      */
-    start(connectionDelegate)
-    {
-        this.server = net.createServer(socket => {
+    start(connectionDelegate) {
+        this.server = net.createServer((socket) => {
             const connection = new Connection(socket, connectionDelegate);
 
-            connection.on('activity', () => this.resetIdleTimeout());
+            connection.on("activity", () => this.resetIdleTimeout());
 
             this.resetIdleTimeout();
         });
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.server.listen(() => resolve());
         });
     }
@@ -47,8 +44,7 @@ export default class Server
     /**
      * Write the listening port on the process output.
      */
-    writePortToOutput()
-    {
+    writePortToOutput() {
         process.stdout.write(`${this.server.address().port}\n`);
     }
 
@@ -57,15 +53,14 @@ export default class Server
      *
      * @protected
      */
-    resetIdleTimeout()
-    {
+    resetIdleTimeout() {
         clearTimeout(this.idleTimer);
 
-        const {idle_timeout: idleTimeout} = this.options;
+        const { idle_timeout: idleTimeout } = this.options;
 
         if (idleTimeout !== null) {
             this.idleTimer = setTimeout(() => {
-                throw new Error('The idle timeout has been reached.');
+                throw new Error("The idle timeout has been reached.");
             }, idleTimeout * 1000);
         }
     }

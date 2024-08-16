@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto;
 
 use Psr\Log\LogLevel;
@@ -53,7 +55,11 @@ class ProcessSupervisor
      * @var string[]
      */
     protected const USELESS_OPTIONS_FOR_PROCESS = [
-        'executable_path', 'read_timeout', 'stop_timeout', 'logger', 'debug',
+        'executable_path',
+        'read_timeout',
+        'stop_timeout',
+        'logger',
+        'debug',
     ];
 
     /**
@@ -134,7 +140,7 @@ class ProcessSupervisor
     public function __construct(
         string $connectionDelegatePath,
         ?ShouldHandleProcessDelegation $processDelegate = null,
-        array $options = []
+        array $options = [],
     ) {
         $this->logger = new Logger($options['logger'] ?? null);
 
@@ -179,7 +185,7 @@ class ProcessSupervisor
      */
     protected function logProcessStandardStreams(): void
     {
-        if (!empty($output = $this->process->getIncrementalOutput())) {
+        if (!empty(($output = $this->process->getIncrementalOutput()))) {
             $this->logger->notice('Received data on stdout: {output}', [
                 'pid' => $this->processPid,
                 'stream' => 'stdout',
@@ -187,7 +193,7 @@ class ProcessSupervisor
             ]);
         }
 
-        if (!empty($errorOutput = $this->process->getIncrementalErrorOutput())) {
+        if (!empty(($errorOutput = $this->process->getIncrementalErrorOutput()))) {
             $this->logger->error('Received data on stderr: {output}', [
                 'pid' => $this->processPid,
                 'stream' => 'stderr',
@@ -217,7 +223,8 @@ class ProcessSupervisor
      * This avoids double declarations of some JS classes in production, due to a require with two different paths (one
      * with the NPM path, the other one with the Composer path).
      */
-    protected function getProcessScriptPath(): string {
+    protected function getProcessScriptPath(): string
+    {
         static $scriptPath = null;
 
         if ($scriptPath !== null) {
@@ -225,7 +232,7 @@ class ProcessSupervisor
         }
 
         // The script path in local development
-        $scriptPath = __DIR__.'/node-process/serve.mjs';
+        $scriptPath = __DIR__ . '/node-process/serve.mjs';
 
         $process = new SymfonyProcess([
             $this->options['executable_path'],
@@ -260,13 +267,15 @@ class ProcessSupervisor
         // Remove useless options for the process
         $processOptions = array_diff_key($this->options, array_flip(self::USELESS_OPTIONS_FOR_PROCESS));
 
-        return new SymfonyProcess(array_merge(
-            [$this->options['executable_path']],
-            $this->options['debug'] ? ['--inspect'] : [],
-            [$this->getProcessScriptPath()],
-            [$realConnectionDelegatePath],
-            [json_encode((object) $processOptions)]
-        ));
+        return new SymfonyProcess(
+            array_merge(
+                [$this->options['executable_path']],
+                $this->options['debug'] ? ['--inspect'] : [],
+                [$this->getProcessScriptPath()],
+                [$realConnectionDelegatePath],
+                [json_encode((object) $processOptions)],
+            ),
+        );
     }
 
     /**
@@ -302,9 +311,9 @@ class ProcessSupervisor
             if (IdleTimeoutException::exceptionApplies($process)) {
                 throw new IdleTimeoutException(
                     $this->options['idle_timeout'],
-                    new NodeFatalException($process, $this->options['debug'])
+                    new NodeFatalException($process, $this->options['debug']),
                 );
-            } else if (NodeFatalException::exceptionApplies($process)) {
+            } elseif (NodeFatalException::exceptionApplies($process)) {
                 throw new NodeFatalException($process, $this->options['debug']);
             } elseif ($process->isTerminated() && !$process->isSuccessful()) {
                 throw new ProcessFailedException($process);
@@ -322,7 +331,8 @@ class ProcessSupervisor
      * The process might take a while to stop itself. So, before trying to check its status or reading its standard
      * streams, this method should be executed.
      */
-    protected function waitForProcessTermination(): void {
+    protected function waitForProcessTermination(): void
+    {
         usleep(self::PROCESS_TERMINATION_DELAY * 1000);
     }
 
@@ -351,9 +361,7 @@ class ProcessSupervisor
     protected function createNewClient(int $port): Socket
     {
         // Set the client as non-blocking to handle the exceptions thrown by the process
-        return (new SocketFactory)
-            ->createClient("tcp://127.0.0.1:$port")
-            ->setBlocking(false);
+        return (new SocketFactory())->createClient("tcp://127.0.0.1:$port")->setBlocking(false);
     }
 
     /**
@@ -378,7 +386,7 @@ class ProcessSupervisor
         }
 
         $this->client->selectWrite(1);
-        
+
         $packet = $serializedInstruction . chr(0);
         $packetSentByteCount = 0;
         while ($packetSentByteCount < strlen($packet)) {

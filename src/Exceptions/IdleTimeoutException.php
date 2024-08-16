@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Exceptions;
 
 use Symfony\Component\Process\Process;
@@ -27,9 +29,13 @@ class IdleTimeoutException extends \RuntimeException
     {
         $timeout = number_format($timeout, 3);
 
-        parent::__construct(implode(' ', [
-            "The idle timeout ($timeout seconds) has been exceeded.",
-            'Maybe you should increase the "idle_timeout" option.',
-        ]), 0, $previous);
+        parent::__construct(
+            implode(' ', [
+                "The idle timeout ($timeout seconds) has been exceeded.",
+                'Maybe you should increase the "idle_timeout" option.',
+            ]),
+            0,
+            $previous,
+        );
     }
 }

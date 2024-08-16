@@ -1,9 +1,8 @@
-'use strict';
+"use strict";
 
-import ResourceIdentity from './Data/ResourceIdentity.mjs';
+import ResourceIdentity from "./Data/ResourceIdentity.mjs";
 
-export default class Instruction
-{
+export default class Instruction {
     /**
      * Constructor.
      *
@@ -11,8 +10,7 @@ export default class Instruction
      * @param  {ResourceRepository} resources
      * @param  {DataUnserializer} dataUnserializer
      */
-    constructor(serializedInstruction, resources, dataUnserializer)
-    {
+    constructor(serializedInstruction, resources, dataUnserializer) {
         this.instruction = serializedInstruction;
         this.resources = resources;
         this.dataUnserializer = dataUnserializer;
@@ -24,8 +22,7 @@ export default class Instruction
      *
      * @return {instructionTypeEnum}
      */
-    type()
-    {
+    type() {
         return this.instruction.type;
     }
 
@@ -35,8 +32,7 @@ export default class Instruction
      * @param  {instructionTypeEnum} type
      * @return {this}
      */
-    overrideType(type)
-    {
+    overrideType(type) {
         this.instruction.type = type;
 
         return this;
@@ -47,8 +43,7 @@ export default class Instruction
      *
      * @return {string}
      */
-    name()
-    {
+    name() {
         return this.instruction.name;
     }
 
@@ -58,8 +53,7 @@ export default class Instruction
      * @param  {string} name
      * @return {this}
      */
-    overrideName(name)
-    {
+    overrideName(name) {
         this.instruction.name = name;
 
         return this;
@@ -70,9 +64,8 @@ export default class Instruction
      *
      * @return {*}
      */
-    value()
-    {
-        const {value} = this.instruction;
+    value() {
+        const { value } = this.instruction;
 
         return value !== undefined ? value : null;
     }
@@ -83,8 +76,7 @@ export default class Instruction
      * @param  {*} value
      * @return {this}
      */
-    overrideValue(value)
-    {
+    overrideValue(value) {
         this.instruction.value = value;
 
         return this;
@@ -95,13 +87,10 @@ export default class Instruction
      *
      * @return {Object|null}
      */
-    resource()
-    {
-        const {resource} = this.instruction;
+    resource() {
+        const { resource } = this.instruction;
 
-        return resource
-            ? this.resources.retrieve(ResourceIdentity.unserialize(resource))
-            : null;
+        return resource ? this.resources.retrieve(ResourceIdentity.unserialize(resource)) : null;
     }
 
     /**
@@ -110,8 +99,7 @@ export default class Instruction
      * @param  {Object|null} resource
      * @return {this}
      */
-    overrideResource(resource)
-    {
+    overrideResource(resource) {
         if (resource !== null) {
             this.instruction.resource = this.resources.store(resource);
         }
@@ -125,8 +113,7 @@ export default class Instruction
      * @param  {Object} resource
      * @return {this}
      */
-    setDefaultResource(resource)
-    {
+    setDefaultResource(resource) {
         this.defaultResource = resource;
 
         return this;
@@ -137,8 +124,7 @@ export default class Instruction
      *
      * @return {boolean}
      */
-    shouldCatchErrors()
-    {
+    shouldCatchErrors() {
         return this.instruction.catched;
     }
 
@@ -147,8 +133,7 @@ export default class Instruction
      *
      * @return {*}
      */
-    execute()
-    {
+    execute() {
         const type = this.type(),
             name = this.name(),
             value = this.value(),
@@ -180,15 +165,13 @@ export default class Instruction
      * @param  {array} args
      * @return {*}
      */
-    callResourceMethod(resource, methodName, args)
-    {
+    callResourceMethod(resource, methodName, args) {
         try {
             return resource[methodName](...args.map(this.unserializeValue.bind(this)));
         } catch (error) {
-            if (error.message === 'resource[methodName] is not a function') {
-                const resourceName = resource.constructor.name === 'Function'
-                    ? resource.name
-                    : resource.constructor.name;
+            if (error.message === "resource[methodName] is not a function") {
+                const resourceName =
+                    resource.constructor.name === "Function" ? resource.name : resource.constructor.name;
 
                 throw new Error(`"${resourceName}.${methodName} is not a function"`);
             }
@@ -204,8 +187,7 @@ export default class Instruction
      * @param  {Object} value
      * @return {*}
      */
-    unserializeValue(value)
-    {
+    unserializeValue(value) {
         return this.dataUnserializer.unserialize(value);
     }
 }
@@ -217,7 +199,7 @@ export default class Instruction
  * @readonly
  */
 Object.assign(Instruction, {
-    TYPE_CALL: 'call',
-    TYPE_GET: 'get',
-    TYPE_SET: 'set',
+    TYPE_CALL: "call",
+    TYPE_GET: "get",
+    TYPE_SET: "set",
 });

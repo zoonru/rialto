@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Traits;
 
 use Nesk\Rialto\{Instruction, ProcessSupervisor};
@@ -22,8 +24,8 @@ trait CommunicatesWithProcessSupervisor
     protected $catchInstructionErrors = false;
 
     /**
-    * Get the process supervisor.
-    */
+     * Get the process supervisor.
+     */
     protected function getProcessSupervisor(): ProcessSupervisor
     {
         return $this->processSupervisor;

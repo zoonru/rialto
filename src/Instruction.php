@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto;
 
 use BadMethodCallException;
@@ -54,7 +56,7 @@ class Instruction implements \JsonSerializable
      */
     public static function noop(): self
     {
-        return new self;
+        return new self();
     }
 
     /**
@@ -118,11 +120,10 @@ class Instruction implements \JsonSerializable
      */
     protected function setValue($value, string $type)
     {
-        $this->value = $type !== self::TYPE_CALL
-            ? $this->validateValue($value)
-            : array_map(function ($value) {
-                return $this->validateValue($value);
-            }, $value);
+        $this->value =
+            $type !== self::TYPE_CALL
+                ? $this->validateValue($value)
+                : array_map(fn($value) => $this->validateValue($value), $value);
     }
 
     /**
@@ -132,7 +133,7 @@ class Instruction implements \JsonSerializable
      */
     protected function validateValue($value)
     {
-        if (is_object($value) && ($value instanceof \Closure)) {
+        if (is_object($value) && $value instanceof \Closure) {
             throw new InvalidArgumentException('You must use JS function wrappers instead of PHP closures.');
         }
 
@@ -172,9 +173,9 @@ class Instruction implements \JsonSerializable
         $name = lcfirst(substr($name, strlen('with')));
 
         if ($name === 'jsonSerialize') {
-            throw new BadMethodCallException;
+            throw new BadMethodCallException();
         }
 
-        return call_user_func([new self, $name], ...$arguments);
+        return call_user_func([new self(), $name], ...$arguments);
     }
 }

@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-import ConsoleInterceptor from './NodeInterceptors/ConsoleInterceptor.mjs';
-import Logger from './Logger.mjs';
-import Server from './Server.mjs';
-import DataSerializer from './Data/Serializer.mjs';
+import DataSerializer from "./Data/Serializer.mjs";
+import Logger from "./Logger.mjs";
+import ConsoleInterceptor from "./NodeInterceptors/ConsoleInterceptor.mjs";
+import Server from "./Server.mjs";
 
 // Throw unhandled rejections
-process.on('unhandledRejection', error => {
+process.on("unhandledRejection", (error) => {
     throw error;
 });
 
 // Output the exceptions in JSON format
-process.on('uncaughtException', error => {
+process.on("uncaughtException", (error) => {
     process.stderr.write(JSON.stringify(DataSerializer.serializeError(error)));
     process.exit(1);
 });
@@ -26,7 +26,7 @@ if (options.log_node_console === true) {
         const level = ConsoleInterceptor.getLevelFromType(type);
         const message = ConsoleInterceptor.formatMessage(originalMessage);
 
-        Logger.log('Node', level, message);
+        Logger.log("Node", level, message);
     });
 }
 

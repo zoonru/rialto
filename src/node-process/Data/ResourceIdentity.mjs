@@ -1,16 +1,14 @@
-'use strict';
+"use strict";
 
-export default class ResourceIdentity
-{
+export default class ResourceIdentity {
     /**
      * Constructor.
      *
      * @param  {string} uniqueIdentifier
      * @param  {string|null} className
      */
-    constructor(uniqueIdentifier, className = null)
-    {
-        this.resource = {uniqueIdentifier, className};
+    constructor(uniqueIdentifier, className = null) {
+        this.resource = { uniqueIdentifier, className };
     }
 
     /**
@@ -18,8 +16,7 @@ export default class ResourceIdentity
      *
      * @return {string}
      */
-    uniqueIdentifier()
-    {
+    uniqueIdentifier() {
         return this.resource.uniqueIdentifier;
     }
 
@@ -28,8 +25,7 @@ export default class ResourceIdentity
      *
      * @return {string|null}
      */
-    className()
-    {
+    className() {
         return this.resource.className;
     }
 
@@ -39,8 +35,7 @@ export default class ResourceIdentity
      * @param  {Object} identity
      * @return {ResourceIdentity}
      */
-    static unserialize(identity)
-    {
+    static unserialize(identity) {
         return new ResourceIdentity(identity.id, identity.class_name);
     }
 
@@ -49,8 +44,7 @@ export default class ResourceIdentity
      *
      * @return {Object}
      */
-    serialize()
-    {
+    serialize() {
         return {
             __rialto_resource__: true,
             id: this.uniqueIdentifier(),

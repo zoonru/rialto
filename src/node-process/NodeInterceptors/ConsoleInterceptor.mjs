@@ -1,20 +1,19 @@
-'use strict';
+"use strict";
 
-import StandardStreamsInterceptor from './StandardStreamsInterceptor.mjs';
+import StandardStreamsInterceptor from "./StandardStreamsInterceptor.mjs";
 
 const SUPPORTED_CONSOLE_METHODS = {
-    'debug': 'DEBUG',
-    'dir': 'DEBUG',
-    'dirxml': 'INFO',
-    'error': 'ERROR',
-    'info': 'INFO',
-    'log': 'INFO',
-    'table': 'DEBUG',
-    'warn': 'WARNING',
+    debug: "DEBUG",
+    dir: "DEBUG",
+    dirxml: "INFO",
+    error: "ERROR",
+    info: "INFO",
+    log: "INFO",
+    table: "DEBUG",
+    warn: "WARNING",
 };
 
-export default class ConsoleInterceptor
-{
+export default class ConsoleInterceptor {
     /**
      * Log interceptor.
      *
@@ -34,7 +33,7 @@ export default class ConsoleInterceptor
         });
 
         // Define the property instead of directly setting the property, the latter is forbidden in some environments.
-        Object.defineProperty(global, 'console', {value: consoleProxy});
+        Object.defineProperty(global, "console", { value: consoleProxy });
     }
 
     /**
@@ -52,7 +51,7 @@ export default class ConsoleInterceptor
         }
 
         return (...args) => {
-            StandardStreamsInterceptor.startInterceptingStrings(message => interceptor(type, message));
+            StandardStreamsInterceptor.startInterceptingStrings((message) => interceptor(type, message));
             originalMethod(...args);
             StandardStreamsInterceptor.stopInterceptingStrings();
         };
@@ -87,10 +86,10 @@ export default class ConsoleInterceptor
     static formatMessage(message) {
         // Remove terminal colors written as escape sequences
         // See: https://stackoverflow.com/a/41407246/1513045
-        message = message.replace(/\x1b\[\d+m/g, '');
+        message = message.replace(/\x1b\[\d+m/g, "");
 
         // Remove the final new line
-        message = message.endsWith('\n') ? message.slice(0, -1) : message;
+        message = message.endsWith("\n") ? message.slice(0, -1) : message;
 
         return message;
     }
