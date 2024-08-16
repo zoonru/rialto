@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Tests\Implementation;
 
-use Nesk\Rialto\ProcessSupervisor;
-use Nesk\Rialto\AbstractEntryPoint;
+use Nesk\Rialto\{AbstractEntryPoint, ProcessSupervisor};
 
 class FsWithProcessDelegation extends AbstractEntryPoint
 {
@@ -11,7 +12,7 @@ class FsWithProcessDelegation extends AbstractEntryPoint
 
     public function __construct(array $userOptions = [])
     {
-        parent::__construct(__DIR__.'/FsConnectionDelegate.js', new FsProcessDelegate, [], $userOptions);
+        parent::__construct(__DIR__ . '/FsConnectionDelegate.mjs', new FsProcessDelegate(), [], $userOptions);
     }
 
     public function getProcessSupervisor(): ProcessSupervisor
