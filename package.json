@@ -16,7 +16,10 @@
     "url": "https://johann.pardanaud.com/"
   },
   "license": "MIT",
-  "repository": "github:mreiden/rialto",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zoonru/rialto.git",
+  },
   "type": "module",
   "main": "src/node-process/index.mjs",
   "engines": {
