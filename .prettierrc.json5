@@ -1,0 +1,15 @@
+{
+    "printWidth": 120,
+    "trailingComma": "all",
+    "plugins": ["@prettier/plugin-php", "prettier-plugin-organize-imports"],
+    "organizeImportsSkipDestructiveCodeActions": false,
+    "overrides": [
+        {
+            "files": "**/*.php",
+            "options": {
+                "phpVersion": "8.3",
+                "singleQuote": true,
+            },
+        },
+    ],
+}

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @callback responseHandler
@@ -13,15 +13,13 @@
 /**
  * Handle the requests of a connection.
  */
-class ConnectionDelegate
-{
+export default class ConnectionDelegate {
     /**
      * Constructor.
      *
      * @param  {Object} options
      */
-    constructor(options)
-    {
+    constructor(options) {
         this.options = options;
     }
 
@@ -32,10 +30,7 @@ class ConnectionDelegate
      * @param  {responseHandler} responseHandler
      * @param  {errorHandler} errorHandler
      */
-    handleInstruction(instruction, responseHandler, errorHandler)
-    {
+    handleInstruction(instruction, responseHandler, errorHandler) {
         responseHandler(null);
     }
 }
-
-module.exports = ConnectionDelegate;

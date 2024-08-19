@@ -1,17 +1,15 @@
-'use strict';
+"use strict";
 
-const _ = require('lodash');
+import _ from "lodash";
 
-class Value
-{
+export default class Value {
     /**
      * Determine if the value is a string, a number, a boolean, or null.
      *
      * @param  {*} value
      * @return {boolean}
      */
-    static isScalar(value)
-    {
+    static isScalar(value) {
         return _.isString(value) || _.isNumber(value) || _.isBoolean(value) || _.isNull(value);
     }
 
@@ -21,8 +19,7 @@ class Value
      * @param  {*} value
      * @return {boolean}
      */
-    static isContainer(value)
-    {
+    static isContainer(value) {
         return _.isArray(value) || _.isPlainObject(value);
     }
 
@@ -33,8 +30,7 @@ class Value
      * @param  {callback} mapper
      * @return {array}
      */
-    static mapContainer(container, mapper)
-    {
+    static mapContainer(container, mapper) {
         if (_.isArray(container)) {
             return container.map(mapper);
         } else if (_.isPlainObject(container)) {
@@ -54,10 +50,7 @@ class Value
      * @param  {*} value
      * @return {boolean}
      */
-    static isResource(value)
-    {
+    static isResource(value) {
         return !Value.isContainer(value) && !Value.isScalar(value);
     }
 }
-
-module.exports = Value;

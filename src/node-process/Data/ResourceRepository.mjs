@@ -1,15 +1,13 @@
-'use strict';
+"use strict";
 
-const ResourceIdentity = require('./ResourceIdentity');
+import ResourceIdentity from "./ResourceIdentity.mjs";
 
-class ResourceRepository
-{
+export default class ResourceRepository {
     /**
      * Constructor.
      */
-    constructor()
-    {
-        this.resources = new Map;
+    constructor() {
+        this.resources = new Map();
     }
 
     /**
@@ -19,8 +17,7 @@ class ResourceRepository
      * @param  {ResourceIdentity} identity
      * @return {*}
      */
-    static retrieveFrom(storage, identity)
-    {
+    static retrieveFrom(storage, identity) {
         for (let [resource, id] of storage) {
             if (identity.uniqueIdentifier() === id) {
                 return resource;
@@ -36,8 +33,7 @@ class ResourceRepository
      * @param  {ResourceIdentity} identity
      * @return {*}
      */
-    retrieve(identity)
-    {
+    retrieve(identity) {
         return ResourceRepository.retrieveFrom(this.resources, identity);
     }
 
@@ -47,8 +43,7 @@ class ResourceRepository
      * @param  {string} uniqueIdentifier
      * @return {*}
      */
-    static retrieveGlobal(uniqueIdentifier)
-    {
+    static retrieveGlobal(uniqueIdentifier) {
         const identity = new ResourceIdentity(uniqueIdentifier);
         return ResourceRepository.retrieveFrom(ResourceRepository.globalResources, identity);
     }
@@ -60,8 +55,7 @@ class ResourceRepository
      * @param  {*} resource
      * @return {ResourceIdentity}
      */
-    static storeIn(storage, resource)
-    {
+    static storeIn(storage, resource) {
         if (storage.has(resource)) {
             return ResourceRepository.generateResourceIdentity(resource, storage.get(resource));
         }
@@ -79,8 +73,7 @@ class ResourceRepository
      * @param  {*} resource
      * @return {ResourceIdentity}
      */
-    store(resource)
-    {
+    store(resource) {
         return ResourceRepository.storeIn(this.resources, resource);
     }
 
@@ -90,8 +83,7 @@ class ResourceRepository
      * @param  {*} resource
      * @return {string}
      */
-    static storeGlobal(resource)
-    {
+    static storeGlobal(resource) {
         return ResourceRepository.storeIn(ResourceRepository.globalResources, resource).uniqueIdentifier();
     }
 
@@ -102,12 +94,9 @@ class ResourceRepository
      * @param  {string} uniqueIdentifier
      * @return {ResourceIdentity}
      */
-    static generateResourceIdentity(resource, uniqueIdentifier)
-    {
+    static generateResourceIdentity(resource, uniqueIdentifier) {
         return new ResourceIdentity(uniqueIdentifier, resource.constructor.name);
     }
 }
 
-ResourceRepository.globalResources = new Map;
-
-module.exports = ResourceRepository;
+ResourceRepository.globalResources = new Map();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Exceptions;
 
 class ReadSocketTimeoutException extends \RuntimeException
@@ -11,9 +13,13 @@ class ReadSocketTimeoutException extends \RuntimeException
     {
         $timeout = number_format($timeout, 3);
 
-        parent::__construct(implode(' ', [
-            "The timeout ($timeout seconds) has been exceeded while reading the socket of the process.",
-            'Maybe you should increase the "read_timeout" option.',
-        ]), 0, $previous);
+        parent::__construct(
+            implode(' ', [
+                "The timeout ($timeout seconds) has been exceeded while reading the socket of the process.",
+                'Maybe you should increase the "read_timeout" option.',
+            ]),
+            0,
+            $previous,
+        );
     }
 }

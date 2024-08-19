@@ -1,17 +1,15 @@
-'use strict';
+"use strict";
 
-const Value = require('./Value');
+import Value from "./Value.mjs";
 
-class Serializer
-{
+export default class Serializer {
     /**
      * Serialize an error to JSON.
      *
      * @param  {Error} error
      * @return {Object}
      */
-    static serializeError(error)
-    {
+    static serializeError(error) {
         return {
             __rialto_error__: true,
             message: error.message,
@@ -24,8 +22,7 @@ class Serializer
      *
      * @param  {ResourceRepository} resources
      */
-    constructor(resources)
-    {
+    constructor(resources) {
         this.resources = resources;
     }
 
@@ -35,8 +32,7 @@ class Serializer
      * @param  {*} value
      * @return {*}
      */
-    serialize(value)
-    {
+    serialize(value) {
         value = value === undefined ? null : value;
 
         if (Value.isContainer(value)) {
@@ -48,5 +44,3 @@ class Serializer
         }
     }
 }
-
-module.exports = Serializer;

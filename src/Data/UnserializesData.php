@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nesk\Rialto\Data;
 
 use Nesk\Rialto\Exceptions\Node\Exception;
@@ -18,15 +20,16 @@ trait UnserializesData
         } else {
             if (($value['__rialto_error__'] ?? false) === true) {
                 return new Exception($value, $this->options['debug']);
-            } else if (($value['__rialto_resource__'] ?? false) === true) {
+            } elseif (($value['__rialto_resource__'] ?? false) === true) {
                 if ($this->delegate instanceof ShouldHandleProcessDelegation) {
-                    $classPath = $this->delegate->resourceFromOriginalClassName($value['class_name'])
-                        ?: $this->delegate->defaultResource();
+                    $classPath =
+                        $this->delegate->resourceFromOriginalClassName($value['class_name']) ?:
+                        $this->delegate->defaultResource();
                 } else {
                     $classPath = $this->defaultResource();
                 }
 
-                $resource = new $classPath;
+                $resource = new $classPath();
 
                 if ($resource instanceof ShouldIdentifyResource) {
                     $resource->setResourceIdentity(new ResourceIdentity($value['class_name'], $value['id']));
