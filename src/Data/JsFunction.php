@@ -2,6 +2,11 @@
 
 namespace Nesk\Rialto\Data;
 
+/**
+ * @method JsFunction createWithBody(string $body)
+ * @method JsFunction createWithParameters(array $parameters)
+ * @method JsFunction createWithScope(array $scope)
+ */
 class JsFunction implements \JsonSerializable
 {
     /**
