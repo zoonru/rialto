@@ -107,18 +107,27 @@ class Connection extends EventEmitter
     writeToSocket(str)
     {
         const payload = Buffer.from(str).toString('base64');
-
         const bodySize = Connection.SOCKET_PACKET_SIZE - Connection.SOCKET_HEADER_SIZE,
             chunkCount = Math.ceil(payload.length / bodySize);
 
-        for (let i = 0 ; i < chunkCount ; i++) {
-            const chunk = payload.substr(i * bodySize, bodySize);
+        let i = 0;
 
-            let chunksLeft = String(chunkCount - 1 - i);
-            chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE, '0');
+        const sendChunk = () => {
+            if (i < chunkCount) {
+                const chunk = payload.slice(i * bodySize, (i + 1) * bodySize);
+                let chunksLeft = String(chunkCount - 1 - i);
+                chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE, '0');
 
-            this.socket.write(`${chunksLeft}${chunk}`);
-        }
+                this.socket.write(`${chunksLeft}${chunk}`);
+                console.log(`Sending chunk ${i + 1}/${chunkCount}`);
+                i++;
+
+                // Schedule the next chunk to be sent immediately after the current execution
+                setImmediate(sendChunk);
+            }
+        };
+
+        sendChunk();
     }
 
     /**
