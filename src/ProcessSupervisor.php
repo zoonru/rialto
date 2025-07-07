@@ -26,18 +26,11 @@ class ProcessSupervisor
     protected const PROCESS_TERMINATION_DELAY = 100;
 
     /**
-     * The size of a packet sent through the sockets (in bytes).
+     * The size of the first chunk of a packet sent through the sockets (in bytes).
      *
      * @var int
      */
-    protected const SOCKET_PACKET_SIZE = 1024;
-
-    /**
-     * The size of the header in each packet sent through the sockets (in bytes).
-     *
-     * @var int
-     */
-    protected const SOCKET_HEADER_SIZE = 5;
+    protected const SOCKET_READ_LENGTH_FIRST_CHUNK = 1024;
 
     /**
      * A short period to wait before reading the next chunk (in milliseconds), this avoids the next chunk to be read as
@@ -405,24 +398,27 @@ class ProcessSupervisor
     {
         $readTimeout = $this->options['read_timeout'];
         $payload = '';
+        $payLoadLength = 0;
 
         try {
             $startTimestamp = microtime(true);
 
             do {
                 $this->client->selectRead($readTimeout);
-                $packet = $this->client->read(static::SOCKET_PACKET_SIZE);
+                $packet = $this->client->read($payLoadLength === 0 ? static::SOCKET_READ_LENGTH_FIRST_CHUNK : $payLoadLength - strlen($payload));
 
-                $chunksLeft = (int) substr($packet, 0, static::SOCKET_HEADER_SIZE);
-                $chunk = substr($packet, static::SOCKET_HEADER_SIZE);
+                $payload .= $packet;
 
-                $payload .= $chunk;
+                if ($payLoadLength === 0 && strlen($payload) >= 4) {
+                    $payLoadLength = unpack('N', $payload)[1];
+                    $payload = substr($payload, 4);
+                }
 
-                if ($chunksLeft > 0) {
+                if ($payLoadLength === 0 || $payLoadLength !== strlen($payload)) {
                     // The next chunk might be an empty string if don't wait a short period on slow environments.
                     usleep(self::SOCKET_NEXT_CHUNK_DELAY * 1000);
                 }
-            } while ($chunksLeft > 0);
+            } while ($payLoadLength === 0 || $payLoadLength !== strlen($payload));
         } catch (SocketException $exception) {
             $this->waitForProcessTermination();
             $this->checkProcessStatus();
@@ -441,7 +437,7 @@ class ProcessSupervisor
 
         $this->logProcessStandardStreams();
 
-        ['logs' => $logs, 'value' => $value] = json_decode(base64_decode($payload), true);
+        ['logs' => $logs, 'value' => $value] = json_decode($payload, true);
 
         foreach ($logs ?: [] as $log) {
             $level = (new \ReflectionClass(LogLevel::class))->getConstant($log['level']);
