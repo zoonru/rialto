@@ -26,19 +26,11 @@ class ProcessSupervisor
     protected const PROCESS_TERMINATION_DELAY = 100;
 
     /**
-     * The size of the first chunk of a packet sent through the sockets (in bytes).
+     * The size of the 32-bit unsigned int prefix. This is the length of data packet.
      *
      * @var int
      */
-    protected const SOCKET_READ_LENGTH_FIRST_CHUNK = 1024;
-
-    /**
-     * A short period to wait before reading the next chunk (in milliseconds), this avoids the next chunk to be read as
-     * an empty string when PuPHPeteer is running on a slow environment.
-     *
-     * @var int
-     */
-    protected const SOCKET_NEXT_CHUNK_DELAY = 1;
+    protected const SOCKET_PACKET_LENGTH_PREFIX = 4;
 
     /**
      * Options to remove before sending them for the process.
@@ -372,10 +364,7 @@ class ProcessSupervisor
         $this->client->selectWrite(1);
         
         $packet = $serializedInstruction . chr(0);
-        $packetSentByteCount = 0;
-        while ($packetSentByteCount < strlen($packet)) {
-            $packetSentByteCount += $this->client->write(substr($packet, $packetSentByteCount));
-        }
+        $this->client->send($packet, 0);
 
         $value = $this->readNextProcessValue($instructionShouldBeLogged);
 
@@ -397,28 +386,18 @@ class ProcessSupervisor
     protected function readNextProcessValue(bool $valueShouldBeLogged = true)
     {
         $readTimeout = $this->options['read_timeout'];
-        $payload = '';
-        $payLoadLength = 0;
 
         try {
             $startTimestamp = microtime(true);
 
-            do {
-                $this->client->selectRead($readTimeout);
-                $packet = $this->client->read($payLoadLength === 0 ? static::SOCKET_READ_LENGTH_FIRST_CHUNK : $payLoadLength - strlen($payload));
+            $this->client->selectRead($readTimeout);
+            $packetLengthRaw = $this->client->recv(static::SOCKET_PACKET_LENGTH_PREFIX, MSG_WAITALL);
+            $packetLength = unpack('N', $packetLengthRaw)[1];
+            if (!is_int($packetLength) || $packetLength <= 0) {
+                throw new SocketException('Invalid packet length');
+            }
 
-                $payload .= $packet;
-
-                if ($payLoadLength === 0 && strlen($payload) >= 4) {
-                    $payLoadLength = unpack('N', $payload)[1];
-                    $payload = substr($payload, 4);
-                }
-
-                if ($payLoadLength === 0 || $payLoadLength !== strlen($payload)) {
-                    // The next chunk might be an empty string if don't wait a short period on slow environments.
-                    usleep(self::SOCKET_NEXT_CHUNK_DELAY * 1000);
-                }
-            } while ($payLoadLength === 0 || $payLoadLength !== strlen($payload));
+            $payload = $this->client->recv($packetLength, MSG_WAITALL);
         } catch (SocketException $exception) {
             $this->waitForProcessTermination();
             $this->checkProcessStatus();
@@ -437,7 +416,7 @@ class ProcessSupervisor
 
         $this->logProcessStandardStreams();
 
-        ['logs' => $logs, 'value' => $value] = json_decode($payload, true);
+        ['logs' => $logs, 'value' => $value] = json_decode($payload, true, PHP_INT_MAX);
 
         foreach ($logs ?: [] as $log) {
             $level = (new \ReflectionClass(LogLevel::class))->getConstant($log['level']);
