@@ -100,34 +100,17 @@ class Connection extends EventEmitter
     }
 
     /**
-     * Write a string to the socket by slitting it in packets of fixed length.
+     * Write a string to the socket
      *
      * @param  {string} str
      */
     writeToSocket(str)
     {
-        const payload = Buffer.from(str).toString('base64');
-        const bodySize = Connection.SOCKET_PACKET_SIZE - Connection.SOCKET_HEADER_SIZE,
-            chunkCount = Math.ceil(payload.length / bodySize);
+        const payload = Buffer.from(str);
+        const payloadLength = Buffer.alloc(4);
+        payloadLength.writeUInt32BE(payload.length);
 
-        let i = 0;
-
-        const sendChunk = () => {
-            if (i < chunkCount) {
-                const chunk = payload.slice(i * bodySize, (i + 1) * bodySize);
-                let chunksLeft = String(chunkCount - 1 - i);
-                chunksLeft = chunksLeft.padStart(Connection.SOCKET_HEADER_SIZE, '0');
-
-                this.socket.write(`${chunksLeft}${chunk}`);
-                console.log(`Sending chunk ${i + 1}/${chunkCount}`);
-                i++;
-
-                // Schedule the next chunk to be sent immediately after the current execution
-                setImmediate(sendChunk);
-            }
-        };
-
-        sendChunk();
+        this.socket.write(Buffer.concat([payloadLength, payload]));
     }
 
     /**
@@ -152,21 +135,5 @@ class Connection extends EventEmitter
         return DataSerializer.serializeError(error);
     }
 }
-
-/**
- * The size of a packet sent through the sockets.
- *
- * @constant
- * @type {number}
-*/
-Connection.SOCKET_PACKET_SIZE = 1024;
-
-/**
- * The size of the header in each packet sent through the sockets.
- *
- * @constant
- * @type {number}
- */
-Connection.SOCKET_HEADER_SIZE = 5;
 
 module.exports = Connection;
