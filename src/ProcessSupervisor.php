@@ -416,7 +416,7 @@ class ProcessSupervisor
 
         $this->logProcessStandardStreams();
 
-        ['logs' => $logs, 'value' => $value] = json_decode($payload, true, PHP_INT_MAX);
+        ['logs' => $logs, 'value' => $value] = json_decode($payload, true);
 
         foreach ($logs ?: [] as $log) {
             $level = (new \ReflectionClass(LogLevel::class))->getConstant($log['level']);
