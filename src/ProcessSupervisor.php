@@ -337,7 +337,7 @@ class ProcessSupervisor
         // Set the client as non-blocking to handle the exceptions thrown by the process
         return (new SocketFactory)
             ->createClient("tcp://127.0.0.1:$port")
-            ->setBlocking(false);
+            ->setBlocking(true);
     }
 
     /**
@@ -398,6 +398,9 @@ class ProcessSupervisor
             }
 
             $payload = $this->client->recv($packetLength, MSG_WAITALL);
+            if (strlen($payload) !== $packetLength) {
+                throw new SocketException('Packet too short');
+            }
         } catch (SocketException $exception) {
             $this->waitForProcessTermination();
             $this->checkProcessStatus();
