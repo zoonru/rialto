@@ -337,7 +337,7 @@ class ProcessSupervisor
         // Set the client as non-blocking to handle the exceptions thrown by the process
         return (new SocketFactory)
             ->createClient("tcp://127.0.0.1:$port")
-            ->setBlocking(true);
+            ->setBlocking(false);
     }
 
     /**
@@ -362,9 +362,12 @@ class ProcessSupervisor
         }
 
         $this->client->selectWrite(1);
-        
+
         $packet = $serializedInstruction . chr(0);
-        $this->client->send($packet, 0);
+        $packetSentByteCount = 0;
+        while ($packetSentByteCount < strlen($packet)) {
+            $packetSentByteCount += $this->client->write(substr($packet, $packetSentByteCount));
+        }
 
         $value = $this->readNextProcessValue($instructionShouldBeLogged);
 
@@ -390,16 +393,14 @@ class ProcessSupervisor
         try {
             $startTimestamp = microtime(true);
 
-            $this->client->selectRead($readTimeout);
-
-            $packetLengthRaw = self::readExactLength($this->client, static::SOCKET_PACKET_LENGTH_PREFIX);
+            $packetLengthRaw = self::readExactLength($this->client, static::SOCKET_PACKET_LENGTH_PREFIX, $readTimeout);
 
             $packetLength = unpack('N', $packetLengthRaw)[1];
             if (!is_int($packetLength) || $packetLength <= 0) {
                 throw new SocketException('Invalid packet length');
             }
 
-            $payload = self::readExactLength($this->client, $packetLength);
+            $payload = self::readExactLength($this->client, $packetLength, $readTimeout);
             if (strlen($payload) !== $packetLength) {
                 throw new SocketException('Packet too short');
             }
@@ -452,11 +453,16 @@ class ProcessSupervisor
         return $value;
     }
 
-    private static function readExactLength(Socket $socket, int $length): string
+    private static function readExactLength(Socket $socket, int $length, float $timeout): string
     {
         $result = '';
         while (strlen($result) < $length) {
-            $result .= $socket->recv($length - strlen($result), MSG_WAITALL);
+            $socket->selectRead($timeout);
+            $chunk = $socket->read($length - strlen($result));
+            if (!$chunk) {
+                throw new SocketException('Empty chunk received from socket');
+            }
+            $result .= $chunk;
         }
 
         return $result;
