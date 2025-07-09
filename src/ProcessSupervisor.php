@@ -391,13 +391,15 @@ class ProcessSupervisor
             $startTimestamp = microtime(true);
 
             $this->client->selectRead($readTimeout);
-            $packetLengthRaw = $this->client->recv(static::SOCKET_PACKET_LENGTH_PREFIX, MSG_WAITALL);
+
+            $packetLengthRaw = self::readExactLength($this->client, static::SOCKET_PACKET_LENGTH_PREFIX);
+
             $packetLength = unpack('N', $packetLengthRaw)[1];
             if (!is_int($packetLength) || $packetLength <= 0) {
                 throw new SocketException('Invalid packet length');
             }
 
-            $payload = $this->client->recv($packetLength, MSG_WAITALL);
+            $payload = self::readExactLength($this->client, $packetLength);
             if (strlen($payload) !== $packetLength) {
                 throw new SocketException('Packet too short');
             }
@@ -448,5 +450,15 @@ class ProcessSupervisor
         }
 
         return $value;
+    }
+
+    private static function readExactLength(Socket $socket, int $length): string
+    {
+        $result = '';
+        while (strlen($result) < $length) {
+            $result .= $socket->recv($length - strlen($result), MSG_WAITALL);
+        }
+
+        return $result;
     }
 }
