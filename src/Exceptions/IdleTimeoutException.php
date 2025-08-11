@@ -23,7 +23,7 @@ class IdleTimeoutException extends \RuntimeException
     /**
      * Constructor.
      */
-    public function __construct(float $timeout, \Throwable $previous = null)
+    public function __construct(float $timeout, ?\Throwable $previous = null)
     {
         $timeout = number_format($timeout, 3);
 
