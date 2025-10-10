@@ -6,7 +6,9 @@ const EventEmitter = require('events'),
     Instruction = require('./Instruction'),
     DataSerializer = require('./Data/Serializer'),
     DataUnserializer = require('./Data/Unserializer'),
-    Logger = require('./Logger');
+    Logger = require('./Logger'),
+    { Readable } = require('stream')
+;
 
 /**
  * Handle a connection interacting with this process.
@@ -110,7 +112,10 @@ class Connection extends EventEmitter
         const payloadLength = Buffer.alloc(4);
         payloadLength.writeUInt32BE(payload.length);
 
-        this.socket.write(Buffer.concat([payloadLength, payload]));
+        this.socket.write(payloadLength);
+
+        const readable = Readable.from(payload);
+        readable.pipe(this.socket, { end: false });
     }
 
     /**
