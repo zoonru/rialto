@@ -18,7 +18,7 @@ Install it in your project:
 
 ```shell
 composer require zoon/rialto
-npm install https://github.com/zoonru/rialto
+npm install git+https://git@github.com/zoonru/rialto.git#zoon
 ```
 
 ## Usage
